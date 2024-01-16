@@ -1,0 +1,44 @@
+#ifndef POLINOM_H
+#define POLINOM_H
+
+#include <iostream>
+#include <vector>
+#include <cmath>
+
+
+class Polinom{
+
+private:
+    std::vector<double> _coef;
+    void Normalize();
+
+public:
+    //konstruktori
+    Polinom();
+    Polinom(int n);
+    Polinom(Polinom* other);
+    
+    //ispis
+    void show(std::ostream os)const;
+
+    //binarni operatori
+    Polinom& operator =(const Polinom& other);
+    Polinom* operator +(Polinom& other) const;
+    Polinom* operator -(Polinom& other) const;
+    Polinom* operator /(Polinom& other) const;
+    //unarni
+    Polinom* operator -();
+
+    //dodavanje koeficijenta na kraj i prikazivanje stepena
+    void AddCoef(double v);
+    int Degree() const;
+
+    //funkcije izvoda i integrala
+    Polinom* Derivative() const;
+    Polinom* Integral(double c) const;
+
+};
+
+
+
+#endif
