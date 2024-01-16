@@ -1,3 +1,3 @@
 # ppj
-vezbanje zadataka \n
+vezbanje zadataka 
 Prevodjenje programskih jezika
