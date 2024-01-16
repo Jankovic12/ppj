@@ -1,3 +1,2 @@
 # ppj
-vezbanje zadataka 
-Prevodjenje programskih jezika
+vezbanje zadataka iz prevodjenje programskih jezika
