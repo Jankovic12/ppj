@@ -21,11 +21,11 @@ public:
     //ispis
     void show(std::ostream os)const;
 
-    //binarni operatori
+    //binarni operatori koristimo pokazivace zbog lakseg koriscenja u parseru
     Polinom& operator =(const Polinom& other);
-    Polinom* operator +(Polinom& other) const;
-    Polinom* operator -(Polinom& other) const;
-    Polinom* operator /(Polinom& other) const;
+    Polinom* operator +(const Polinom& other) const;
+    Polinom* operator -(const Polinom& other) const;
+    Polinom* operator /(const Polinom& other) const;
     //unarni
     Polinom* operator -();
 
@@ -37,8 +37,13 @@ public:
     Polinom* Derivative() const;
     Polinom* Integral(double c) const;
 
+    //logicki operatori
+    bool operator ==(const Polinom& other) const;
+    bool operator != (const Polinom& other) const;
+
 };
 
+std::ostream& operator <<(std::ostream& os, const Polinom& p);
 
 
 #endif
