@@ -20,6 +20,9 @@ public:
     
     //ispis
     void show(std::ostream os)const;
+    //dodavanje koeficijenta na kraj i prikazivanje stepena
+    void AddCoef(double v);
+    int Degree() const;
 
     //binarni operatori koristimo pokazivace zbog lakseg koriscenja u parseru
     Polinom& operator =(const Polinom& other);
@@ -29,9 +32,6 @@ public:
     //unarni
     Polinom* operator -();
 
-    //dodavanje koeficijenta na kraj i prikazivanje stepena
-    void AddCoef(double v);
-    int Degree() const;
 
     //funkcije izvoda i integrala
     Polinom* Derivative() const;

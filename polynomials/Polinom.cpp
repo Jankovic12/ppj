@@ -27,6 +27,11 @@ void Polinom::AddCoef(double v){
     _coef.push_back(v);
 }
 
+int Polinom::Degree() const{
+    return _coef.size()
+}
+
+
 void Polinom::show(std::ostream& os){
 
     bool prvi = true;
@@ -136,3 +141,5 @@ Polinom* Polinom::operator *(const Polinom& other) const{
 
     return result;
 }
+
+
