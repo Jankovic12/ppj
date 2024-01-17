@@ -9,7 +9,10 @@ print(q);
 print(<1,2,3,4>);
 
 r = p + q*2 + r*deg(p);
+print(r);
 poly s = 2*r - q*p;
+print(2*r);
+print(q*p);
 print(-s);
 print(-s[2.5] + <1,2>);
 

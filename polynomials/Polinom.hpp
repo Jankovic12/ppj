@@ -19,7 +19,7 @@ public:
     Polinom(Polinom* other);
     
     //ispis
-    void show(std::ostream os)const;
+    void show(std::ostream& os) const;
     //dodavanje koeficijenta na kraj i prikazivanje stepena
     void AddCoef(double v);
     int Degree() const;
@@ -28,14 +28,15 @@ public:
     Polinom& operator =(const Polinom& other);
     Polinom* operator +(const Polinom& other) const;
     Polinom* operator -(const Polinom& other) const;
-    Polinom* operator /(const Polinom& other) const;
+    Polinom* operator *(const Polinom& other) const;
     //unarni
     Polinom* operator -();
-
 
     //funkcije izvoda i integrala
     Polinom* Derivative() const;
     Polinom* Integral(double c) const;
+    /* racunanje vrednosti polinoma u tacki */
+    double operator [](double x);
 
     //logicki operatori
     bool operator ==(const Polinom& other) const;

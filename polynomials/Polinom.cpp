@@ -16,7 +16,7 @@ Polinom::Polinom(int n) : _coef(n+1, 0){
 
 Polinom::Polinom(Polinom* p){
 
-    int n = p->_coef.size()
+    int n = p->_coef.size();
 
     for(int i = 0; i < n; i++){
         _coef.push_back(p->_coef[i]);
@@ -28,11 +28,11 @@ void Polinom::AddCoef(double v){
 }
 
 int Polinom::Degree() const{
-    return _coef.size()
+    return _coef.size() > 0 ? _coef.size() -1 : 0;
 }
 
 
-void Polinom::show(std::ostream& os){
+void Polinom::show(std::ostream& os) const{
 
     bool prvi = true;
     for(int i = 0; i < _coef.size(); i++){
@@ -45,7 +45,7 @@ void Polinom::show(std::ostream& os){
                 prvi = false;
             }
             else{
-                os << "-" << _coef[i];
+                os << "-" << fabs(_coef[i]);
                 prvi = false;
             }
         }
@@ -104,7 +104,7 @@ Polinom* Polinom::operator +(const Polinom& other) const{
 }
 Polinom* Polinom::operator -(const Polinom& other) const{
 
-    Polinom result = new Polinom();
+    Polinom* result = new Polinom();
 
     int n = std::min(_coef.size(), other._coef.size());
 
@@ -129,7 +129,7 @@ Polinom* Polinom::operator -(const Polinom& other) const{
 
 Polinom* Polinom::operator *(const Polinom& other) const{
 
-    Polinom* result = Polinom(this->Degree() + other.Degree() + 1);
+    Polinom* result = new Polinom(this->Degree() + other.Degree() + 1);
     result->_coef[result->_coef.size() - 1] = 0;
 
     for(int i = 0; i <_coef.size(); i++){
@@ -142,4 +142,85 @@ Polinom* Polinom::operator *(const Polinom& other) const{
     return result;
 }
 
+Polinom* Polinom::operator -(){
 
+    Polinom* result = new Polinom();
+
+    for(int i = 0; i < _coef.size(); i++){
+        result->AddCoef(-_coef[i]);
+    }
+
+    return result;
+}
+
+Polinom* Polinom::Derivative() const{
+
+    Polinom* result = new Polinom();
+
+    for(int i = 1; i < _coef.size(); i++){
+        result->AddCoef(_coef[i] * i);
+    }
+
+    return result;
+}
+
+Polinom* Polinom::Integral(double c) const{
+
+    Polinom* result = new Polinom();
+    result->AddCoef(c);
+
+    for(int i = 0; i < _coef.size(); i++){
+        result->AddCoef(_coef[i]/(i+1));
+    }
+
+    return result;
+}
+
+double Polinom::operator [](double x){
+
+    if(_coef.size() == 0){
+        return 0;
+    }
+
+    double result = 0;
+    double exp = 1;
+
+    for(int i = 0; i < _coef.size(); i++){
+
+        result += _coef[i] * exp;
+        exp *= x;
+    }
+
+    return result;
+}
+
+//logicki operatori
+
+bool Polinom::operator == (const Polinom& other) const{
+
+    if(this->Degree() != other.Degree()){
+        return false;
+    }
+
+    for(int i = 0; i < _coef.size(); i++){
+        if(_coef[i] != other._coef[i]){
+            return false;
+        }
+    }
+
+    return true;
+}
+bool Polinom::operator != (const Polinom& other) const{
+
+    if(*this == other){
+        return false;
+    }
+
+    return true;
+}
+
+
+std::ostream& operator <<(std::ostream& os, const Polinom& p){
+    p.show(os);
+    return os;
+}
