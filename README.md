@@ -1,2 +1,2 @@
 # ppj
-vezbanje zadataka iz prevodjenje programskih jezika
+bottom up parsing practicing
