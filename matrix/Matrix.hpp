@@ -5,6 +5,7 @@
 #include <vector>
 #include <cmath>
 #include <utility>
+#include <iomanip>
 
 
 class Matrix{
@@ -30,16 +31,17 @@ public:
     void show(std::ostream& os) const;
 
     Matrix& operator =(Matrix& other) ;
+   
     //arithmetic operators return pointers to new objects on heap for easier managment in parser
     Matrix* operator +(Matrix& other) const;
     //Matrix* operator +(double c) const;
-
     Matrix* operator -(Matrix& other) const;
     //Matrix* operator -(double c) const;
-
-
     Matrix* operator *(Matrix& other) const;
     //Matrix* operator *(double c) const;
+
+    //unar operator
+    Matrix* operator -() const;
 
     //custom multiplication for multiplying numbers that have same [i][j] coordinates
     Matrix* MultiplyByCoordinates(Matrix& other) const;

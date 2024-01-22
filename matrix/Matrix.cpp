@@ -46,7 +46,7 @@ void Matrix::AddRow(std::vector<double>& row){
         _data.push_back(row);
     }
     else{
-        throw "Cant add row, not the same size with matrix";
+        throw "Cant add row, not the same size with matrix rows";
     }
 }
 
@@ -55,7 +55,7 @@ void Matrix::show(std::ostream& os) const{
     
     for(int i = 0; i < this->Rows(); i++){
         for(int j = 0; j < this->Cols(); j++){
-            os << "  " << (*this)[i][j] << "  ";
+            os << std::setw(6) << (*this)[i][j] << " ";
         }
         os << std::endl;
     }
@@ -230,6 +230,18 @@ Matrix* Matrix::MultiplyByCoordinates(Matrix& other) const{
     return result;
 }
 
+//unar - operator
+Matrix* Matrix::operator -() const{
+
+    Matrix* result = new Matrix(this->Rows(), this->Cols());
+    for(int i = 0; i < this->Rows(); i++){
+        for(int j = 0; j < this->Cols(); j++){
+            (*result)[i][j] = -(*this)[i][j];
+        }
+    }
+
+    return result;
+}
 
 //arithmetics over
 //------------------------------------------------
@@ -322,4 +334,12 @@ std::ostream& operator <<(std::ostream& os, const Matrix& m){
 std::ostream& operator <<(std::ostream& os, std::pair<int, int> p){
     os << p.first << " x " << p.second;
     return os;
+}
+
+int main(){
+
+    Matrix a = Matrix(3, 4, 4);
+    std::cout << *(-a) << std::endl;
+
+    return 0;
 }
