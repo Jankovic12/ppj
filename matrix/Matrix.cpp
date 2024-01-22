@@ -73,52 +73,12 @@ Matrix& Matrix::operator = (Matrix& other){
     return *this;
 }
 
-//arithmetic operators written in pair (return value is pointer to new object on heap for easier manipulation later in parser)
-//one for arithmetics with type `Matrix + constant`
-//one for arithmetics with type `constant + Matrix`
-//one for arithmetics with two matrices
-//respectively    
-
-// M + c
-// Matrix* Matrix::operator +(double c) const{
-
-//     if(this->Rows() == 0 || this->Cols() == 0){
-//         return nullptr;
-//     }
-//     Matrix* result = new Matrix(this->Rows(), this->Cols());
-
-//     for(int i = 0; i < this->Rows(); i++){
-//         for (int j = 0; j < this->Cols(); j++){
-//             result->_data[i][j] = _data[i][j] + c; 
-//         }
-//     }
-
-//     return result;
-//}
-// c + M
-// Matrix* operator +(double c, Matrix& other){
-
-//     if(other.Rows() == 0 || other.Cols() == 0){
-//         return nullptr;
-//     }
-
-//     Matrix* result = new Matrix(other.Rows(), other.Cols());
-    
-//     for( int i = 0; i < other.Rows(); i++){
-//         for(int j = 0; j < other.Cols(); j++){
-//             (*result)[i][j] = other[i][j] + c;
-//         }
-//     }
-
-//     return result;
-// }
-
-
-
+//arithmetic operators written in pair 
 
 // M + M
-/*This implementation will be used from now on because in parser
-    grammar expression regular numbers will be
+//return value is pointer to new object on heap for easier manipulation later in parser)
+/*This implementation will be used because in parser grammar
+    expression nonterminal will be type Matrix*, and regular numbers will be
     portrayed as 1x1 Matrix
 */
 Matrix* Matrix::operator +(Matrix& other) const{
@@ -362,71 +322,4 @@ std::ostream& operator <<(std::ostream& os, const Matrix& m){
 std::ostream& operator <<(std::ostream& os, std::pair<int, int> p){
     os << p.first << " x " << p.second;
     return os;
-}
-
-int main(){
-
-    // Matrix m = Matrix(3, 4, 2.1);
-
-    // std::cout << m.Size() << std::endl;
-    // std::cout << m << std::endl;
-    
-    //Matrix* r = 3 + m;
-
-  //  Matrix* a = (*r) + m;
-
-    // Matrix a = Matrix(3,3, 2);
-    // Matrix b = Matrix (3, 3, 4);
-
-    
-
-    // std::cout << a << std::endl;
-    // std::cout << b << std::endl;
-
-    // Matrix* c = a.MultiplyByCoordinates(b);
-    // std::cout << *c << std::endl;
-
-    // std::cout << (a == b) << std::endl;
-    // std::cout << (a != b) << std::endl;
-
-
-//    std::cout << *r << std::endl;
-//    std::cout << *a << std::endl;
-
-    // delete c;
-
-    // c = m.Transpose();
-    // std::cout << *c << std::endl;
-
-//    delete a; delete r;
-    // try{
-    //     std::cout << m[12][13] << std::endl;
-    // }
-    // catch (const char* s){
-    //     std::cerr << s << std::endl;
-    //     return -1;
-    // }
-
-    Matrix a = Matrix(3, 5, 0);
-    double x = 1;
-    for(int i = 0; i < a.Rows(); i++){
-        for(int j = 0; j < a.Cols(); j++){
-            a[i][j] = x++;
-        }
-    }
-
-    std::cout << a << std::endl;
-
-    std::pair<int, int> r;
-    std::pair<int, int> c;
-
-    r.first = 0; r.second = 2;
-    c.first = 0; c.second = 4;
-
-    Matrix* b = a.SubMatrix(r, c);
-
-    std::cout << *b << std::endl;
-    delete b;
-
-    return 0;
 }
