@@ -335,11 +335,3 @@ std::ostream& operator <<(std::ostream& os, std::pair<int, int> p){
     os << p.first << " x " << p.second;
     return os;
 }
-
-int main(){
-
-    Matrix a = Matrix(3, 4, 4);
-    std::cout << *(-a) << std::endl;
-
-    return 0;
-}
