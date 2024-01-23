@@ -42,7 +42,11 @@ std::pair<int, int> Matrix::Size()const {
 
 //Adding a row to a matrix
 void Matrix::AddRow(std::vector<double>& row){
-    if(int(row.size()) == this->Cols()){
+
+    if(_data.size() == 0){
+        _data.push_back(row);
+    }
+    else if(int(row.size()) == this->Cols()){
         _data.push_back(row);
     }
     else{

@@ -40,7 +40,7 @@ public:
     Matrix* operator *(Matrix& other) const;
     //Matrix* operator *(double c) const;
 
-    //unar operator
+    //unary operator
     Matrix* operator -() const;
 
     //custom multiplication for multiplying numbers that have same [i][j] coordinates

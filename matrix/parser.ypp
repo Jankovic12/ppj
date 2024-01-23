@@ -1,0 +1,253 @@
+
+%{
+    #include <iostream>
+    #include <iomanip>
+    #include <cstdlib>
+    #include <map>
+    #include <string>
+    #include <vector>
+
+    #include "Matrix.hpp"
+
+    extern int yylex();
+
+    void yyerror(std::string errorMsg){
+        std::cerr << "Syntax error: " << errorMsg << std::endl;
+        exit(EXIT_FAILURE);
+    }
+
+    std::map<std::string, Matrix*> variables;
+%}
+
+%union{
+    Matrix* m;
+    double v;
+    std::string* s;
+    bool b;
+    std::vector<double>* vec;
+    std::pair<int, int>* p;
+}
+
+//tokens
+%token SIZE_T ROWS_T COLS_T 
+%token EQ NEQ
+%token<s> ID
+%token<v> NUMBER
+
+//non terminals
+%type<m> expression matrix_decl num_lists exec_cmd
+%type<vec> list
+%type<b> logic_cmd
+%type<v> number
+%type<p> interval
+
+//arithmetic operators
+%nonassoc EQ NEQ
+%left '+' '-'
+%left '*' MUL_BY_COORD
+%right UMINUS
+%left '\''
+%left '['
+
+%start program
+
+%%
+
+program: program command
+    | command
+    ;
+
+command: exec_cmd '\n'          {
+                                    std::cout << (*$1) << std::endl;
+                                    delete $1;
+                                }
+    | exec_cmd ';' '\n'         {
+                                    delete $1;
+                                }
+    | '\n'                      {   }
+    | logic_cmd ';' '\n'        {}
+    | logic_cmd '\n'            {
+                                    if($1){
+                                        std::cout << "TRUE" << std::endl;
+                                    }
+                                    else{
+                                        std::cout << "FALSE" << std::endl;
+                                    }
+                                }
+    ;
+
+exec_cmd: ID '=' expression         {
+                                        auto it = variables.find(*$1);
+
+                                        if(it != variables.end()){
+                                            yyerror("Variable: " + (*$1) + " is already defined");
+                                        }
+
+                                        variables[*$1] = $3;
+                                        delete $1;
+                                        $$ = new Matrix($3);
+                                    }
+    | expression                    {$$ = $1;}
+    ;
+
+logic_cmd: expression EQ expression         { $$ = $1 == $3; delete $1; delete $3; }
+    | expression NEQ expression             { $$ = $1 != $3; delete $1; delete $3;}
+    ;
+
+expression: expression '+' expression           {   
+                                                    Matrix* r = (*$1) + (*$3);
+                                                    if(r == nullptr){
+                                                        yyerror("Cannot do addition with matrices of different dimensions");
+                                                    }
+                                                    $$ = r;
+                                                    delete $1; delete $3;
+                                                }
+    | expression '-' expression                 {
+                                                    Matrix* r = (*$1) - (*$3);
+                                                    if(r == nullptr){
+                                                        yyerror("Cannot do substraction with matrices of different dimensions");
+                                                    }
+                                                    $$ = r;
+                                                    delete $1; delete $3;
+                                                }
+    | expression '*' expression                 {
+                                                    Matrix* r = (*$1) * (*$3);
+                                                    if(r == nullptr){
+                                                        yyerror("Cannot do multiplication, number of columns of first matrix need to match number of rows to second matrix");
+                                                    }
+                                                    $$ = r;
+                                                    delete $1; delete $3;
+                                                }
+    | expression MUL_BY_COORD expression        {
+                                                    Matrix* r = $1->MultiplyByCoordinates((*$3));
+                                                    if(r == nullptr){
+                                                        yyerror("Cannot do multiplication by coordinates if matrices are different dimensions");
+                                                    }
+
+                                                    $$ = r;
+                                                    delete $1; delete $3;
+                                                }
+    | expression  '\''                          {
+                                                    $$ = $1->Transpose();
+                                                    delete $1;
+                                                }
+    | '-' expression %prec UMINUS               {
+                                                    $$ = -(*$2);
+                                                    delete $2;
+                                                }
+    | matrix_decl                               {
+                                                    $$ = $1;
+                                                }
+    | expression '['interval ',' interval ']'   {
+                                                    $$ = $1->SubMatrix((*$3), (*$5));
+                                                    delete $1; delete $3; delete $5;
+                                                }
+    | '(' expression ')'                        {
+                                                    $$ = $2;
+                                                }
+    | NUMBER                                    {
+                                                    $$ = new Matrix(1,1, $1);
+                                                }
+    | SIZE_T '(' expression ')'                 {
+                                                    Matrix* r = new Matrix(1, 2);
+                                                    int rows = $3->Rows();
+                                                    int cols = $3->Cols();
+
+
+                                                    (*r)[0][0] = rows;
+                                                    (*r)[0][1] = cols;
+                                                    
+
+                                                    $$ = r;
+                                                    delete $3;
+                                                }
+    | ROWS_T '(' expression ')'                 {
+                                                    Matrix* r = new Matrix(1, 1);
+                                                    int rows = $3->Rows();
+
+
+                                                    (*r)[0][0] = rows;
+
+                                                    $$ = r;
+                                                    delete $3;
+                                                }
+    | COLS_T '(' expression ')'                 {
+                                                    Matrix* r = new Matrix(1, 1);
+                                                    int cols = $3->Rows();
+
+                                                    (*r)[0][0] = cols;
+                                                    
+                                                    $$ = r;
+                                                    delete $3;
+                                                }
+    | ID                                        {
+                                                    auto it = variables.find(*$1);
+
+                                                    if(it == variables.end()){
+                                                        yyerror("Variable: " + (*$1) + " is not defined");
+                                                    }
+
+                                                    $$ = new Matrix(it->second);
+
+                                                    delete $1;
+                                                }
+    ;
+
+number: NUMBER      { $$ =  $1; }
+    | '-' NUMBER    { $$ = -$2;}
+    ;
+
+interval: NUMBER ':' NUMBER                         {
+                                                        $$ = new std::pair<int, int>($1, $3);
+                                                    }
+    ;
+
+matrix_decl: '[' num_lists ']'                      {$$ = $2;}
+    ;
+
+num_lists: num_lists ';' list                   {
+                                                    try{
+                                                        $1->AddRow(*$3);
+                                                    }catch(char* s){
+                                                        yyerror(s);
+                                                    }
+                                                    delete $3;
+                                                    $$ = $1;
+                                                }
+    | list                                      {
+                                                    Matrix* r = new Matrix();
+
+                                                    r->AddRow(*$1);
+
+                                                    $$ = r;
+                                                    delete $1;
+                                                }
+    ;
+
+list: list ',' number                           {
+                                                    $1->push_back($3);
+                                                    $$ = $1;
+                                                }
+    | number                                    {
+                                                    $$ = new std::vector<double>();
+                                                    $$->push_back($1);
+                                                }
+    ;
+
+%%
+
+int main(){
+
+    if(yyparse() == 0){
+        std::cout << "Ok" << std::endl;
+    }
+    else{
+        std::cout << "Syntax error" << std::endl;
+    }
+
+    for(auto it = variables.begin(); it != variables.end(); it++){
+        delete it->second;
+    }
+
+    exit(EXIT_SUCCESS);
+}
